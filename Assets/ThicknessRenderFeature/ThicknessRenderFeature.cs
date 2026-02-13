@@ -32,7 +32,7 @@ public class ThicknessRenderFeature : ScriptableRendererFeature
         public LayerMask layerMask = 0;
         public Material backFaceDeptMaterial;
         public string globalTextureName = "_ThicknessDepthTexture";
-        public RenderTextureFormat textureFormat = RenderTextureFormat.R16;
+        public RenderTextureFormat textureFormat = RenderTextureFormat.RHalf;
     }
 
     class ThicknessRenderFeaturePass : ScriptableRenderPass

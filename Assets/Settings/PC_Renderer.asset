@@ -16,7 +16,7 @@ MonoBehaviour:
   settings:
     layerMask:
       serializedVersion: 2
-      m_Bits: 1
+      m_Bits: 64
     backFaceDeptMaterial: {fileID: 2100000, guid: edcd2e068cb6ea1439c2013f92861363, type: 2}
     globalTextureName: _ThicknessDepthTexture
     textureFormat: 28
