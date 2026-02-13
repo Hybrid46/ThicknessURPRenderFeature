@@ -35,7 +35,7 @@ Shader "ThicknessDepth/DebugDepth"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
+                float4 screenPos : TEXCOORD0;
             };
 
             TEXTURE2D(_ThicknessDepthTexture);
@@ -48,22 +48,22 @@ Shader "ThicknessDepth/DebugDepth"
             {
                 Varyings o;
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
-                o.uv = v.uv;
+                o.screenPos = ComputeScreenPos(o.positionCS);
                 return o;
             }
 
             float4 frag (Varyings i) : SV_Target
             {
-                float depth = SAMPLE_TEXTURE2D(
+                float2 screenUV = i.screenPos.xy / i.screenPos.w;
+
+                float rawDepth = SAMPLE_TEXTURE2D(
                     _ThicknessDepthTexture,
                     sampler_ThicknessDepthTexture,
-                    i.uv
+                    screenUV
                 ).r;
 
-                float t = saturate((depth - _DebugNear) / (_DebugFar - _DebugNear));
+                float t = saturate((rawDepth - _DebugNear) / (_DebugFar - _DebugNear));
                 return float4(t, t, t, 1);
-
-                //return float4(depth, depth, depth, 1);
             }
             ENDHLSL
         }

@@ -13,7 +13,7 @@ Shader "ThicknessDepth/BackFaceDepth"
             Name "BackFaceDepth"
             Cull Front
             ZWrite Off
-            ZTest LEqual // GEqual for overlap fix?
+            ZTest LEqual
 
             HLSLPROGRAM
             #pragma vertex vert
@@ -28,20 +28,28 @@ Shader "ThicknessDepth/BackFaceDepth"
 
             struct Varyings
             {
-                float4 positionHCS : SV_POSITION;
+                float4 positionCS : SV_POSITION;
+                float3 positionVS : TEXCOORD0;
             };
 
-            Varyings vert (Attributes IN)
+            Varyings vert(Attributes IN)
             {
                 Varyings OUT;
-                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+
+                OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
+
+                float3 positionWS = TransformObjectToWorld(IN.positionOS.xyz);
+                float3 positionVS = TransformWorldToView(positionWS);
+                
+                OUT.positionVS = positionVS;
+
                 return OUT;
             }
 
-            float frag (Varyings IN) : SV_Target
+            float4 frag(Varyings IN) : SV_Target
             {
-                float depth = IN.positionHCS.z / IN.positionHCS.w;
-                return LinearEyeDepth(depth, _ZBufferParams);
+                float fragmentEyeDepth = -IN.positionVS.z;
+                return fragmentEyeDepth;
             }
             ENDHLSL
         }
